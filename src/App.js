@@ -17,7 +17,7 @@ const Item = ({title, url, author, num_comments, points}) => (
         <span>{points}</span>
     </div>
 )
-
+//repeat "React Custom Hooks (Advanced)"
 const userSemiPersistentSate = (key, initialState) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [value, setValue] = React.useState(
@@ -30,10 +30,20 @@ const userSemiPersistentSate = (key, initialState) => {
     return [value, setValue]
 }
 
-const InputWithLabel = ({id, label, value, onInputChange, type = 'text'}) => (
+//repeat:
+// "React fragments",
+// "Reusable React Component", 
+// "React Component Composition"
+const InputWithLabel = ({id, value, onInputChange, type = 'text', children}) => (
     <>
-        <label htmlFor={id}>{label}</label>
+        <label htmlFor={id}>{children}</label>
         <input id={id} type={type} value={value} onChange={onInputChange}/>
+    </>
+)
+
+const StrongText = ({value}) => (
+    <>
+        <strong>{value}</strong>
     </>
 )
 
@@ -83,7 +93,9 @@ const App = () => {
     return (
         <div>
             <h1>My Hacker Stories</h1>
-            <InputWithLabel id="search" label="Search:" value={searchTerm} onInputChange={handleChange}/>
+            <InputWithLabel id="search" label="Search:" value={searchTerm} onInputChange={handleChange}>
+                <StrongText value="Search:" />
+            </InputWithLabel>
             <hr/>
             <List list={searchedStories}/>
         </div>
