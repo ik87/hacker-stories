@@ -30,6 +30,18 @@ const Search = ({search, onSearch}) => {
     )
 }
 
+const userSemiPersistentSate = (key, initialState) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [value, setValue] = React.useState(
+        localStorage.getItem(key) || initialState
+    )
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    React.useEffect(() => {
+        localStorage.setItem(key, value);
+    }, [value, key])
+    return [value, setValue]
+}
+
 const App = () => {
     const stories = [
         {
@@ -58,13 +70,10 @@ const App = () => {
         }
     ];
 
-    const [searchTerm, setSearchTerm] = React.useState(
-        localStorage.getItem('search') || 'React'
-    );
 
-    React.useEffect(()=> {
-        localStorage.setItem('search', searchTerm);
-    }, [searchTerm])
+
+    const [searchTerm, setSearchTerm] = userSemiPersistentSate("search", 'React');
+
 
     const handleChange = event => {
         setSearchTerm(event.target.value)
