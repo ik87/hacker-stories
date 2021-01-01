@@ -18,17 +18,6 @@ const Item = ({title, url, author, num_comments, points}) => (
     </div>
 )
 
-
-const Search = ({search, onSearch}) => {
-
-    return (
-        <>
-            <label htmlFor="search">Search: </label>
-            <input id="search" type="text" value={search} onChange={onSearch}/>
-        </>
-    )
-}
-
 const userSemiPersistentSate = (key, initialState) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [value, setValue] = React.useState(
@@ -40,6 +29,13 @@ const userSemiPersistentSate = (key, initialState) => {
     }, [value, key])
     return [value, setValue]
 }
+
+const InputWithLabel = ({id, label, value, onInputChange, type = 'text'}) => (
+    <>
+        <label htmlFor={id}>{label}</label>
+        <input id={id} type={type} value={value} onChange={onInputChange}/>
+    </>
+)
 
 const App = () => {
     const stories = [
@@ -87,7 +83,7 @@ const App = () => {
     return (
         <div>
             <h1>My Hacker Stories</h1>
-            <Search search={searchTerm} onSearch={handleChange}/>
+            <InputWithLabel id="search" label="Search:" value={searchTerm} onInputChange={handleChange}/>
             <hr/>
             <List list={searchedStories}/>
         </div>
