@@ -22,11 +22,10 @@ const Item = ({title, url, author, num_comments, points}) => (
 const Search = ({search, onSearch}) => {
 
     return (
-        <div>
-            <h1>My Hacker Stories</h1>
+        <>
             <label htmlFor="search">Search: </label>
             <input id="search" type="text" value={search} onChange={onSearch}/>
-        </div>
+        </>
     )
 }
 
@@ -71,7 +70,6 @@ const App = () => {
     ];
 
 
-
     const [searchTerm, setSearchTerm] = userSemiPersistentSate("search", 'React');
 
 
@@ -86,14 +84,12 @@ const App = () => {
     });
 
 
-
-
     return (
         <div>
+            <h1>My Hacker Stories</h1>
             <Search search={searchTerm} onSearch={handleChange}/>
             <hr/>
             <List list={searchedStories}/>
-
         </div>
     )
 }
