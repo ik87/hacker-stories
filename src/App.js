@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 
 
 const List = ({list}) =>
@@ -17,7 +17,6 @@ const Item = ({title, url, author, num_comments, points}) => (
         <span>{points}</span>
     </div>
 )
-//repeat "React Custom Hooks (Advanced)"
 const userSemiPersistentSate = (key, initialState) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [value, setValue] = React.useState(
@@ -31,15 +30,33 @@ const userSemiPersistentSate = (key, initialState) => {
 }
 
 //repeat:
-// "React fragments",
-// "Reusable React Component", 
-// "React Component Composition"
-const InputWithLabel = ({id, value, onInputChange, type = 'text', children}) => (
-    <>
-        <label htmlFor={id}>{children}</label>
-        <input id={id} type={type} value={value} onChange={onInputChange}/>
-    </>
-)
+// Imperative React
+const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
+    // A
+    const inputRef = React.useRef();
+    // C
+    React.useEffect(() => {
+        if (isFocused && inputRef.current) {
+            // D
+            inputRef.current.focus();
+        }
+    }, [isFocused])
+
+    return (
+        <>
+            <label htmlFor={id}>{children}</label>
+            {/* B */}
+            <input
+             //   ref={inputRef}
+                id={id}
+                type={type}
+                value={value}
+                autoFocus={isFocused}
+                onChange={onInputChange}
+            />
+        </>
+    )
+}
 
 const StrongText = ({value}) => (
     <>
@@ -93,9 +110,15 @@ const App = () => {
     return (
         <div>
             <h1>My Hacker Stories</h1>
-            <InputWithLabel id="search" label="Search:" value={searchTerm} onInputChange={handleChange}>
-                <StrongText value="Search:" />
+            <InputWithLabel
+                id="search"
+                value={searchTerm}
+                onInputChange={handleChange}
+                isFocused
+            >
+                <StrongText value="Search:"/>
             </InputWithLabel>
+
             <hr/>
             <List list={searchedStories}/>
         </div>
