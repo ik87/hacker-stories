@@ -1,22 +1,31 @@
 import React, {useEffect, useRef, useState} from 'react'
 
 
-const List = ({list}) =>
+const List = ({list, onRemoveItem}) =>
 
-    list.map(item => <Item key={item.objectID} {...item} />)
+    list.map(item => <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem}/>)
 
 
-const Item = ({title, url, author, num_comments, points}) => (
+const Item = ({item, onRemoveItem}) => {
 
-    <div>
+
+    return (
+        <div>
             <span>
-                <a href={url}>{title}</a>
+                <a href={item.url}>{item.title}</a>
             </span>
-        <span>{author}</span>
-        <span>{num_comments}</span>
-        <span>{points}</span>
-    </div>
-)
+            <span>{item.author}</span>
+            <span>{item.num_comments}</span>
+            <span>{item.points}</span>
+            <span>
+                <button type="button" onClick={()=>onRemoveItem(item)}>
+                    Dismiss
+                </button>
+            </span>
+        </div>
+    )
+}
+
 const userSemiPersistentSate = (key, initialState) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [value, setValue] = React.useState(
@@ -47,7 +56,7 @@ const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, chi
             <label htmlFor={id}>{children}</label>
             {/* B */}
             <input
-             //   ref={inputRef}
+                //   ref={inputRef}
                 id={id}
                 type={type}
                 value={value}
@@ -65,7 +74,7 @@ const StrongText = ({value}) => (
 )
 
 const App = () => {
-    const stories = [
+    const intialStroies = [
         {
             title: 'React',
             url: 'https://reactjs.org/',
@@ -95,6 +104,7 @@ const App = () => {
 
     const [searchTerm, setSearchTerm] = userSemiPersistentSate("search", 'React');
 
+    const [stories, setStories] = React.useState(intialStroies);
 
     const handleChange = event => {
         setSearchTerm(event.target.value)
@@ -105,6 +115,13 @@ const App = () => {
             .toLowerCase()
             .includes(searchTerm.toLowerCase());
     });
+
+    const handleRemoveStory = item => {
+        const newStories = stories.filter(
+            story => item.objectID !== story.objectID
+        )
+        setStories(newStories);
+    }
 
 
     return (
@@ -120,7 +137,7 @@ const App = () => {
             </InputWithLabel>
 
             <hr/>
-            <List list={searchedStories}/>
+            <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
         </div>
     )
 }
