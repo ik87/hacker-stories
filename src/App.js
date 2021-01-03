@@ -72,6 +72,9 @@ const userSemiPersistentSate = (key, initialState) => {
 
 //repeat:
 // Imperative React
+// (80) Inline Handler in JSX
+// (86) React Asynchronous Data
+// (88) React Conditional Rendering
 const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
     // A
     const inputRef = React.useRef();
@@ -109,14 +112,17 @@ const App = () => {
 
 
     const [searchTerm, setSearchTerm] = userSemiPersistentSate("search", '');
-
     const [stories, setStories] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [isError, setIsError] = React.useState(false);
 
 
     React.useEffect(() => {
+        setIsLoading(true);
         getAsyncStories().then(result => {
             setStories(result.data.stories);
-        });
+            setIsLoading(false);
+        }).catch(() => setIsError(true));
     }, []);
 
     const handleChange = event => {
@@ -150,7 +156,11 @@ const App = () => {
             </InputWithLabel>
 
             <hr/>
-            <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+            {isError && <p>Something went wrong...</p>}
+            {isLoading ? (<p>Loading...</p>) :
+                (
+                    <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+                )}
         </div>
     )
 }
