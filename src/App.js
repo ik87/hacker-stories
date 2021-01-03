@@ -1,5 +1,37 @@
 import React, {useEffect, useRef, useState} from 'react'
 
+const initialStories = [
+    {
+        title: 'React',
+        url: 'https://reactjs.org/',
+        author: 'Jordan Walke',
+        num_comments: 3,
+        points: 4,
+        objectID: 0,
+    },
+    {
+        title: 'Redux',
+        url: 'https://redux.js.org/',
+        author: 'Dan Abramov, Andrew Clark',
+        num_comments: 2,
+        points: 5,
+        objectID: 1,
+    },
+    {
+        title: null,
+        url: null,
+        author: null,
+        num_comments: null,
+        points: null,
+        objectID: null,
+    }
+];
+
+const getAsyncStories = () =>
+    new Promise(resolve =>
+        setTimeout(
+            () => resolve({data: {stories: initialStories}}), 2000));
+
 
 const List = ({list, onRemoveItem}) =>
 
@@ -18,7 +50,7 @@ const Item = ({item, onRemoveItem}) => {
             <span>{item.num_comments}</span>
             <span>{item.points}</span>
             <span>
-                <button type="button" onClick={()=>onRemoveItem(item)}>
+                <button type="button" onClick={() => onRemoveItem(item)}>
                     Dismiss
                 </button>
             </span>
@@ -74,37 +106,18 @@ const StrongText = ({value}) => (
 )
 
 const App = () => {
-    const intialStroies = [
-        {
-            title: 'React',
-            url: 'https://reactjs.org/',
-            author: 'Jordan Walke',
-            num_comments: 3,
-            points: 4,
-            objectID: 0,
-        },
-        {
-            title: 'Redux',
-            url: 'https://redux.js.org/',
-            author: 'Dan Abramov, Andrew Clark',
-            num_comments: 2,
-            points: 5,
-            objectID: 1,
-        },
-        {
-            title: null,
-            url: null,
-            author: null,
-            num_comments: null,
-            points: null,
-            objectID: null,
-        }
-    ];
 
 
-    const [searchTerm, setSearchTerm] = userSemiPersistentSate("search", 'React');
+    const [searchTerm, setSearchTerm] = userSemiPersistentSate("search", '');
 
-    const [stories, setStories] = React.useState(intialStroies);
+    const [stories, setStories] = React.useState([]);
+
+
+    React.useEffect(() => {
+        getAsyncStories().then(result => {
+            setStories(result.data.stories);
+        });
+    }, []);
 
     const handleChange = event => {
         setSearchTerm(event.target.value)
