@@ -113,6 +113,7 @@ const userSemiPersistentSate = (key, initialState) => {
 //(101) Data Fetching with React
 //(103) Data Re-Fetching in React
 //(106) Memoized Handler in React (Advanced)
+//(109) Explicit Data Fetching with React
 const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
     // A
     const inputRef = React.useRef();
@@ -150,27 +151,26 @@ const App = () => {
 
 
     const [searchTerm, setSearchTerm] = userSemiPersistentSate("search", '');
-    //const [isLoading, setIsLoading] = React.useState(false);
-    //const [isError, setIsError] = React.useState(false);
     const [stories, dispatchStories] = React.useReducer(
         storiesReducer,
         {
             data: [], isLoading: false, isError: false
         })
 
-/*
-* fetch(`${API_ENDPOINT}react`)
-* // B .then(response => response.json()) // C .then(result => {
-* dispatchStories({
-* type: 'STORIES_FETCH_SUCCESS',
-* payload: result.hits,
-* // D
-* }); })
-* */
+    const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`)
+
+    const handleSearchInput = event => {
+        setSearchTerm(event.target.value)
+    }
+
+    const handleSearchSubmit = () => {
+        setUrl(`${API_ENDPOINT}${searchTerm}`)
+    }
+
    const handlerFetchStories = React.useCallback(() => {
         if(!searchTerm) return;
 
-        fetch(`${API_ENDPOINT}${searchTerm}`)
+        fetch(url)
             .then(resonpse => resonpse.json())
             .then(result => {
             dispatchStories({
@@ -181,7 +181,7 @@ const App = () => {
             //setIsError(true)
             dispatchStories({type: 'STORIES_FETCH_FAILURE'})
         );
-    }, [searchTerm]);
+    }, [url]);
 
    React.useEffect( () => {
        handlerFetchStories();
@@ -211,12 +211,17 @@ const App = () => {
             <InputWithLabel
                 id="search"
                 value={searchTerm}
-                onInputChange={handleChange}
+                onInputChange={handleSearchInput}
                 isFocused
             >
                 <StrongText value="Search:"/>
             </InputWithLabel>
-
+            <button
+                type="button"
+                disabled={!searchTerm}
+                onClick={handleSearchSubmit} >
+                Submit
+            </button>
             <hr/>
             {stories.isError && <p>Something went wrong...</p>}
             {stories.isLoading ? (<p>Loading...</p>) :
