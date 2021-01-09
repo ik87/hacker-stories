@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-
+import axios from 'axios'
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
 const initialStories = [
@@ -114,6 +114,7 @@ const userSemiPersistentSate = (key, initialState) => {
 //(103) Data Re-Fetching in React
 //(106) Memoized Handler in React (Advanced)
 //(109) Explicit Data Fetching with React
+//(111) Third-Party Libraries in React
 const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
     // A
     const inputRef = React.useRef();
@@ -170,12 +171,11 @@ const App = () => {
    const handlerFetchStories = React.useCallback(() => {
         if(!searchTerm) return;
 
-        fetch(url)
-            .then(resonpse => resonpse.json())
+        axios.get(url)
             .then(result => {
             dispatchStories({
                 type: 'STORIES_FETCH_SUCCESS',
-                payload: result.hits
+                payload: result.data.hits
             })
         }).catch(() =>
             //setIsError(true)
