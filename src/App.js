@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 import axios from 'axios'
+
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
 const initialStories = [
@@ -115,6 +116,7 @@ const userSemiPersistentSate = (key, initialState) => {
 //(106) Memoized Handler in React (Advanced)
 //(109) Explicit Data Fetching with React
 //(111) Third-Party Libraries in React
+//(113) Async/Await in React (Advanced)
 const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
     // A
     const inputRef = React.useRef();
@@ -168,24 +170,40 @@ const App = () => {
         setUrl(`${API_ENDPOINT}${searchTerm}`)
     }
 
-   const handlerFetchStories = React.useCallback(() => {
-        if(!searchTerm) return;
+    const handlerFetchStories = React.useCallback(async () => {
+        dispatchStories({type: 'STORIES_FETCH_INIT'})
+        try {
+            const result = await axios.get(url)
 
-        axios.get(url)
-            .then(result => {
             dispatchStories({
                 type: 'STORIES_FETCH_SUCCESS',
                 payload: result.data.hits
             })
-        }).catch(() =>
-            //setIsError(true)
+        } catch {
             dispatchStories({type: 'STORIES_FETCH_FAILURE'})
-        );
-    }, [url]);
+        }
 
-   React.useEffect( () => {
-       handlerFetchStories();
-   }, [handlerFetchStories])
+    }, [url])
+
+
+    // const handlerFetchStories = React.useCallback(() => {
+    //      if(!searchTerm) return;
+    //
+    //      axios.get(url)
+    //          .then(result => {
+    //          dispatchStories({
+    //              type: 'STORIES_FETCH_SUCCESS',
+    //              payload: result.data.hits
+    //          })
+    //      }).catch(() =>
+    //          //setIsError(true)
+    //          dispatchStories({type: 'STORIES_FETCH_FAILURE'})
+    //      );
+    //  }, [url]);
+
+    React.useEffect(() => {
+        handlerFetchStories();
+    }, [handlerFetchStories])
 
     const handleChange = event => {
         setSearchTerm(event.target.value)
@@ -219,7 +237,7 @@ const App = () => {
             <button
                 type="button"
                 disabled={!searchTerm}
-                onClick={handleSearchSubmit} >
+                onClick={handleSearchSubmit}>
                 Submit
             </button>
             <hr/>
