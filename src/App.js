@@ -56,8 +56,8 @@ const storiesReducer = (state, action) => {
         case 'REMOVE_STORY':
             return {
                 ...state,
-                data: state.filter(
-                    story => story.data.objectID !== action.payload.objectID
+                data: state.data.filter(
+                    story => story.objectID !== action.payload.objectID
                 )
             }
         default:
@@ -112,6 +112,7 @@ const userSemiPersistentSate = (key, initialState) => {
 //repeat:
 //(101) Data Fetching with React
 //(103) Data Re-Fetching in React
+//(106) Memoized Handler in React (Advanced)
 const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
     // A
     const inputRef = React.useRef();
@@ -166,7 +167,7 @@ const App = () => {
 * // D
 * }); })
 * */
-    React.useEffect(() => {
+   const handlerFetchStories = React.useCallback(() => {
         if(!searchTerm) return;
 
         fetch(`${API_ENDPOINT}${searchTerm}`)
@@ -181,6 +182,10 @@ const App = () => {
             dispatchStories({type: 'STORIES_FETCH_FAILURE'})
         );
     }, [searchTerm]);
+
+   React.useEffect( () => {
+       handlerFetchStories();
+   }, [handlerFetchStories])
 
     const handleChange = event => {
         setSearchTerm(event.target.value)
