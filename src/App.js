@@ -111,6 +111,7 @@ const userSemiPersistentSate = (key, initialState) => {
 
 //repeat:
 //(101) Data Fetching with React
+//(103) Data Re-Fetching in React
 const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
     // A
     const inputRef = React.useRef();
@@ -166,23 +167,20 @@ const App = () => {
 * }); })
 * */
     React.useEffect(() => {
-       // setIsLoading(true);
-      // dispatchStories({type: 'STORIES_FETCH_INIT'})
-      //  getAsyncStories().then(result => {
-        fetch(`${API_ENDPOINT}react`)
+        if(!searchTerm) return;
+
+        fetch(`${API_ENDPOINT}${searchTerm}`)
             .then(resonpse => resonpse.json())
             .then(result => {
             dispatchStories({
                 type: 'STORIES_FETCH_SUCCESS',
                 payload: result.hits
             })
-            //setStories(result.data.stories);
-            //setIsLoading(false);
         }).catch(() =>
             //setIsError(true)
             dispatchStories({type: 'STORIES_FETCH_FAILURE'})
         );
-    }, []);
+    }, [searchTerm]);
 
     const handleChange = event => {
         setSearchTerm(event.target.value)
@@ -218,7 +216,8 @@ const App = () => {
             {stories.isError && <p>Something went wrong...</p>}
             {stories.isLoading ? (<p>Loading...</p>) :
                 (
-                    <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+                    //<List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+                    <List list={stories.data} onRemoveItem={handleRemoveStory}/>
                 )}
         </div>
     )
