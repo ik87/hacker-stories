@@ -110,6 +110,28 @@ const userSemiPersistentSate = (key, initialState) => {
     return [value, setValue]
 }
 
+const SearchForm = ({
+    searchTerm,
+    onSearchInput,
+    onSearchSubmit
+}) => (
+    <form onSubmit={onSearchSubmit}>
+        <InputWithLabel
+            id="search"
+            value={searchTerm}
+            onInputChange={onSearchInput}
+            isFocused
+        >
+            <StrongText value="Search:"/>
+        </InputWithLabel>
+        <button
+            type="submit"
+            disabled={!searchTerm}>
+            Submit
+        </button>
+    </form>
+)
+
 //repeat:
 //(101) Data Fetching with React
 //(103) Data Re-Fetching in React
@@ -117,6 +139,7 @@ const userSemiPersistentSate = (key, initialState) => {
 //(109) Explicit Data Fetching with React
 //(111) Third-Party Libraries in React
 //(113) Async/Await in React (Advanced)
+//(115) Forms in React
 const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
     // A
     const inputRef = React.useRef();
@@ -166,8 +189,9 @@ const App = () => {
         setSearchTerm(event.target.value)
     }
 
-    const handleSearchSubmit = () => {
+    const handleSearchSubmit = event => {
         setUrl(`${API_ENDPOINT}${searchTerm}`)
+        event.preventDefault()
     }
 
     const handlerFetchStories = React.useCallback(async () => {
@@ -185,35 +209,9 @@ const App = () => {
 
     }, [url])
 
-
-    // const handlerFetchStories = React.useCallback(() => {
-    //      if(!searchTerm) return;
-    //
-    //      axios.get(url)
-    //          .then(result => {
-    //          dispatchStories({
-    //              type: 'STORIES_FETCH_SUCCESS',
-    //              payload: result.data.hits
-    //          })
-    //      }).catch(() =>
-    //          //setIsError(true)
-    //          dispatchStories({type: 'STORIES_FETCH_FAILURE'})
-    //      );
-    //  }, [url]);
-
     React.useEffect(() => {
         handlerFetchStories();
     }, [handlerFetchStories])
-
-    const handleChange = event => {
-        setSearchTerm(event.target.value)
-    }
-
-    const searchedStories = stories.data.filter(story => {
-        return !!story.title && story.title
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase());
-    });
 
     const handleRemoveStory = item => {
         dispatchStories({
@@ -226,25 +224,15 @@ const App = () => {
     return (
         <div>
             <h1>My Hacker Stories</h1>
-            <InputWithLabel
-                id="search"
-                value={searchTerm}
-                onInputChange={handleSearchInput}
-                isFocused
-            >
-                <StrongText value="Search:"/>
-            </InputWithLabel>
-            <button
-                type="button"
-                disabled={!searchTerm}
-                onClick={handleSearchSubmit}>
-                Submit
-            </button>
+            <SearchForm
+                onSearchInput={handleSearchInput}
+                onSearchSubmit={handleSearchSubmit}
+                searchTerm={searchTerm}
+            />
             <hr/>
             {stories.isError && <p>Something went wrong...</p>}
             {stories.isLoading ? (<p>Loading...</p>) :
                 (
-                    //<List list={searchedStories} onRemoveItem={handleRemoveStory}/>
                     <List list={stories.data} onRemoveItem={handleRemoveStory}/>
                 )}
         </div>
