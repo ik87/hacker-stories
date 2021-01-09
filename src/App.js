@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {act} from "@testing-library/react";
+
+const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
 const initialStories = [
     {
@@ -109,7 +110,7 @@ const userSemiPersistentSate = (key, initialState) => {
 }
 
 //repeat:
-//(96) React Impossible States
+//(101) Data Fetching with React
 const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
     // A
     const inputRef = React.useRef();
@@ -155,14 +156,25 @@ const App = () => {
             data: [], isLoading: false, isError: false
         })
 
-
+/*
+* fetch(`${API_ENDPOINT}react`)
+* // B .then(response => response.json()) // C .then(result => {
+* dispatchStories({
+* type: 'STORIES_FETCH_SUCCESS',
+* payload: result.hits,
+* // D
+* }); })
+* */
     React.useEffect(() => {
        // setIsLoading(true);
-       dispatchStories({type: 'STORIES_FETCH_INIT'})
-        getAsyncStories().then(result => {
+      // dispatchStories({type: 'STORIES_FETCH_INIT'})
+      //  getAsyncStories().then(result => {
+        fetch(`${API_ENDPOINT}react`)
+            .then(resonpse => resonpse.json())
+            .then(result => {
             dispatchStories({
                 type: 'STORIES_FETCH_SUCCESS',
-                payload: result.data.stories
+                payload: result.hits
             })
             //setStories(result.data.stories);
             //setIsLoading(false);
