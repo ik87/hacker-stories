@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import './App.css';
+import styles from './App.module.css';
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -50,7 +50,7 @@ const Item = ({item, onRemoveItem}) => {
 
 
     return (
-        <div className="item">
+        <div className={styles.item}>
             <span style={{ width: '40%' }}>
                 <a href={item.url}>{item.title}</a>
             </span>
@@ -61,7 +61,7 @@ const Item = ({item, onRemoveItem}) => {
                 <button
                     type="button"
                     onClick={() => onRemoveItem(item)}
-                    className="button button_small"
+                    className={`${styles.button} ${styles.buttonSmall}`}
                 >
                     Dismiss
                 </button>
@@ -99,7 +99,7 @@ const SearchForm = ({
         <button
             type="submit"
             disabled={!searchTerm}
-            className="button button_large"
+            className={`${styles.button} ${styles.buttonLarge}`}
         >
             Submit
         </button>
@@ -108,6 +108,7 @@ const SearchForm = ({
 
 //repeat:
 //(126) CSS in React
+//(132) CSS Modules in React
 const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
     // A
     const inputRef = React.useRef();
@@ -121,7 +122,7 @@ const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, chi
 
     return (
         <>
-            <label htmlFor={id} className="label">{children}</label>
+            <label htmlFor={id} className={styles.label}>{children}</label>
             {/* B */}
             <input
                 //   ref={inputRef}
@@ -130,7 +131,7 @@ const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, chi
                 value={value}
                 autoFocus={isFocused}
                 onChange={onInputChange}
-                className="input"
+                className={styles.input}
             />
         </>
     )
@@ -191,8 +192,8 @@ const App = () => {
 
 
     return (
-        <div className="container">
-            <h1 className="headline-primary">My Hacker Stories</h1>
+        <div className={styles.container}>
+            <h1 className={styles.headlinePrimary}>My Hacker Stories</h1>
             <SearchForm
                 onSearchInput={handleSearchInput}
                 onSearchSubmit={handleSearchSubmit}
