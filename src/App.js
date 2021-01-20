@@ -1,35 +1,8 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React from 'react'
 import axios from 'axios'
+import './App.css';
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
-
-const initialStories = [
-    {
-        title: 'React',
-        url: 'https://reactjs.org/',
-        author: 'Jordan Walke',
-        num_comments: 3,
-        points: 4,
-        objectID: 0,
-    },
-    {
-        title: 'Redux',
-        url: 'https://redux.js.org/',
-        author: 'Dan Abramov, Andrew Clark',
-        num_comments: 2,
-        points: 5,
-        objectID: 1,
-    },
-    {
-        title: null,
-        url: null,
-        author: null,
-        num_comments: null,
-        points: null,
-        objectID: null,
-    }
-];
-
 
 const storiesReducer = (state, action) => {
 
@@ -67,11 +40,6 @@ const storiesReducer = (state, action) => {
 
 }
 
-const getAsyncStories = () =>
-    new Promise(resolve =>
-        setTimeout(
-            () => resolve({data: {stories: initialStories}}), 2000));
-
 
 const List = ({list, onRemoveItem}) =>
 
@@ -82,15 +50,19 @@ const Item = ({item, onRemoveItem}) => {
 
 
     return (
-        <div>
-            <span>
+        <div className="item">
+            <span style={{ width: '40%' }}>
                 <a href={item.url}>{item.title}</a>
             </span>
-            <span>{item.author}</span>
-            <span>{item.num_comments}</span>
-            <span>{item.points}</span>
-            <span>
-                <button type="button" onClick={() => onRemoveItem(item)}>
+            <span style={{ width: '30%' }}>{item.author}</span>
+            <span style={{width: '10%' }}>{item.num_comments}</span>
+            <span style={{ width: '10%' }}>{item.points}</span>
+            <span style={{ width: '10%' }}>
+                <button
+                    type="button"
+                    onClick={() => onRemoveItem(item)}
+                    className="button button_small"
+                >
                     Dismiss
                 </button>
             </span>
@@ -111,10 +83,10 @@ const userSemiPersistentSate = (key, initialState) => {
 }
 
 const SearchForm = ({
-    searchTerm,
-    onSearchInput,
-    onSearchSubmit
-}) => (
+                        searchTerm,
+                        onSearchInput,
+                        onSearchSubmit
+                    }) => (
     <form onSubmit={onSearchSubmit}>
         <InputWithLabel
             id="search"
@@ -126,20 +98,16 @@ const SearchForm = ({
         </InputWithLabel>
         <button
             type="submit"
-            disabled={!searchTerm}>
+            disabled={!searchTerm}
+            className="button button_large"
+        >
             Submit
         </button>
     </form>
 )
 
 //repeat:
-//(101) Data Fetching with React
-//(103) Data Re-Fetching in React
-//(106) Memoized Handler in React (Advanced)
-//(109) Explicit Data Fetching with React
-//(111) Third-Party Libraries in React
-//(113) Async/Await in React (Advanced)
-//(115) Forms in React
+//(126) CSS in React
 const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, children}) => {
     // A
     const inputRef = React.useRef();
@@ -153,7 +121,7 @@ const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, chi
 
     return (
         <>
-            <label htmlFor={id}>{children}</label>
+            <label htmlFor={id} className="label">{children}</label>
             {/* B */}
             <input
                 //   ref={inputRef}
@@ -162,6 +130,7 @@ const InputWithLabel = ({id, value, onInputChange, type = 'text', isFocused, chi
                 value={value}
                 autoFocus={isFocused}
                 onChange={onInputChange}
+                className="input"
             />
         </>
     )
@@ -222,14 +191,13 @@ const App = () => {
 
 
     return (
-        <div>
-            <h1>My Hacker Stories</h1>
+        <div className="container">
+            <h1 className="headline-primary">My Hacker Stories</h1>
             <SearchForm
                 onSearchInput={handleSearchInput}
                 onSearchSubmit={handleSearchSubmit}
                 searchTerm={searchTerm}
             />
-            <hr/>
             {stories.isError && <p>Something went wrong...</p>}
             {stories.isLoading ? (<p>Loading...</p>) :
                 (
